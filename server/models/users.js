@@ -1,21 +1,26 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
+
+function isEmailValid(emailInput) {
+  return validator.isEmail(emailInput);
+}
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    default: 'Jacques Cousteau',
     minlength: 2,
     maxlength: 30,
   },
   about: {
     type: String,
-    required: true,
+    default: 'Explorer',
     minlength: 2,
     maxlength: 30,
   },
   avatar: {
     type: String,
-    required: true,
+    default: 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
     validate: {
       validator(v) {
         const re = /(http:\/\/|https:\/\/)(www.)?\S/gi;
@@ -23,6 +28,17 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Please enter a valid URL',
     },
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: isEmailValid,
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 8,
   },
 });
 

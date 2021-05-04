@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const ApiError = require('../errors/api-error');
 const User = require('../models/users');
 
@@ -16,13 +17,17 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.createUser = (req, res) => { // _id will become accessible
   const {
-    name, about, avatar,
+    name, about, avatar, password, email,
   } = req.body;
-  User.create({
-    name,
-    about,
-    avatar,
-  })
+
+  bcrypt.hash(password, 10)
+    .then((hash) => (User.create({
+      name,
+      about,
+      avatar,
+      password: hash,
+      email,
+    })))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -98,5 +103,30 @@ module.exports.updateAvatar = (req, res) => {
         ApiError.validationError(res, 'Invalid data error');
       }
       ApiError.internalServerError(res, 'Internal server error');
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Incorrect password or email'));
+      }
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        // the hashes didn't match, rejecting the promise
+        return Promise.reject(new Error('Incorrect password or email'));
+      }
+      // successful authentication
+      return res.send({ message: 'Everything good!' });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
     });
 };
