@@ -1,3 +1,4 @@
+const cors = require('cors');
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -8,7 +9,7 @@ const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
 
 const { PORT = 3000 } = process.env;
-
+app.use(cors());
 app.use(helmet());
 console.log('aaa', process.env.NODE_ENV);
 app.use(express.json());

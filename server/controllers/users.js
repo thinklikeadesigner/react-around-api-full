@@ -5,6 +5,8 @@ const User = require('../models/users');
 
 const apiError = new ApiError();
 
+const SALT_ROUND = 10;
+
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -27,7 +29,7 @@ module.exports.createUser = (req, res) => { // _id will become accessible
     if (exists) {
       return res.status(403).send({ message: 'you already exist!' });
     }
-    return bcrypt.hash(password, 10)
+    return bcrypt.hash(password, SALT_ROUND)
       .then((hash) => (User.create({
         name,
         about,
@@ -50,25 +52,22 @@ module.exports.createUser = (req, res) => { // _id will become accessible
   });
 };
 
-module.exports.getUserId = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        apiError.notFound(res, 'User ID not found');
-        return;
-      }
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid Card ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.validationError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
-};
-
+module.exports.getUserId = (req, res) => User.findById(req.params.id)
+  .then((user) => {
+    if (!user) {
+      apiError.notFound(res, 'User ID not found');
+      return;
+    }
+    res.send(user);
+  })
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      apiError.castError(res, 'Invalid Card ID error');
+    } else if (err.name === 'ValidationError') {
+      apiError.validationError(res, 'Invalid data error');
+    }
+    apiError.internalServerError(res, 'Internal server error');
+  });
 module.exports.updateUser = (req, res) => {
   const {
     name, about,
