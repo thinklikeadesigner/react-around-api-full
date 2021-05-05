@@ -1,17 +1,20 @@
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../errors/api-error');
 const User = require('../models/users');
+
+const apiError = new ApiError();
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid ID error');
+        apiError.castError(res, 'Invalid ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.castError(res, 'Invalid data error');
+        apiError.castError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -28,14 +31,17 @@ module.exports.createUser = (req, res) => { // _id will become accessible
       password: hash,
       email,
     })))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({
+      id: user._id,
+      email: user.email,
+    }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid ID error');
+        apiError.castError(res, 'Invalid ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.castError(res, 'Invalid data error');
+        apiError.castError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -43,18 +49,18 @@ module.exports.getUserId = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        ApiError.notFound(res, 'User ID not found');
+        apiError.notFound(res, 'User ID not found');
         return;
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -69,18 +75,18 @@ module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        ApiError.notFound(res, 'User ID not found');
+        apiError.notFound(res, 'User ID not found');
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 module.exports.updateAvatar = (req, res) => {
@@ -91,42 +97,36 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        ApiError.notFound(res, 'User ID not found');
+        apiError.notFound(res, 'User ID not found');
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  User.findOne({ email })
+  return User.findUserByCredentials(email, password)
+
     .then((user) => {
-      if (!user) {
-        return Promise.reject(new Error('Incorrect password or email'));
-      }
-      return bcrypt.compare(password, user.password);
-    })
-    .then((matched) => {
-      if (!matched) {
-        // the hashes didn't match, rejecting the promise
-        return Promise.reject(new Error('Incorrect password or email'));
-      }
-      // successful authentication
-      return res.send({ message: 'Everything good!' });
+      const { NODE_ENV, JWT_SECRET } = process.env;
+
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
+      );
+      res.send({ token });
     })
     .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
+      res.status(401).send({ message: err.message });
     });
 };

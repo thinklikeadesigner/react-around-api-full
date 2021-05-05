@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
@@ -34,12 +35,39 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: isEmailValid,
+    // validate: {
+    //   validator(v) {
+    //     return validator.isEmail(v);
+    //   },
+    //   message: 'Please enter a valid ',
+    // },
+    // FIXME email validator function wont work. shows connection refused if wrong email,
+    // and when i try to add a message it wont work at all
   },
   password: {
     type: String,
     required: true,
     minlength: 8,
+    select: false,
   },
 });
+
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+  return this.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Incorrect email or password'));
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Incorrect email or password'));
+          }
+
+          return user; // now user is available
+        });
+    });
+};
 
 module.exports = mongoose.model('users', userSchema);

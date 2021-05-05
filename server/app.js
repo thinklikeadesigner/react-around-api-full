@@ -1,6 +1,6 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-
 const helmet = require('helmet');
 
 const app = express();
@@ -10,15 +10,7 @@ const userRouter = require('./routes/users');
 const { PORT = 3000 } = process.env;
 
 app.use(helmet());
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: '606ba812d198c4cf35003969',
-    // paste the _id of the test user created in the previous step
-  };
-  next();
-});
-
+console.log('aaa', process.env.NODE_ENV);
 app.use(express.json());
 app.use(userRouter);
 app.use(cardRouter);
