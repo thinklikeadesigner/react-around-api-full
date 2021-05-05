@@ -23,26 +23,31 @@ module.exports.createUser = (req, res) => { // _id will become accessible
     name, about, avatar, password, email,
   } = req.body;
 
-  bcrypt.hash(password, 10)
-    .then((hash) => (User.create({
-      name,
-      about,
-      avatar,
-      password: hash,
-      email,
-    })))
-    .then((user) => res.status(201).send({
-      id: user._id,
-      email: user.email,
-    }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.castError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
+  User.findOne({ email }).then((exists) => {
+    if (exists) {
+      return res.status(403).send({ message: 'you already exist!' });
+    }
+    return bcrypt.hash(password, 10)
+      .then((hash) => (User.create({
+        name,
+        about,
+        avatar,
+        password: hash,
+        email,
+      })))
+      .then((user) => res.status(201).send({
+        id: user._id,
+        email: user.email,
+      }))
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          apiError.castError(res, 'Invalid ID error');
+        } else if (err.name === 'ValidationError') {
+          apiError.castError(res, 'Invalid data error');
+        }
+        apiError.internalServerError(res, 'Internal server error');
+      });
+  });
 };
 
 module.exports.getUserId = (req, res) => {
