@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const ApiError = require('../errors/api-error');
 const User = require('../models/users');
 const { generateToken } = require('../utils/jwt');
-const { isAuth } = require('../utils/jwt');
+// const { isAuth } = require('../utils/jwt');
 
 const apiError = new ApiError();
 const SALT_ROUND = 10;
@@ -43,7 +43,7 @@ module.exports.createUser = (req, res) => { // _id will become accessible
 
 // eslint-disable-next-line consistent-return
 module.exports.getUsers = (req, res) => {
-  if (!isAuth(req.headers.authorization)) return res.status(401);
+  // if (!isAuth(req.headers.authorization)) return res.status(401);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
@@ -57,14 +57,21 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserId = (req, res) => {
-  if (!isAuth(req.headers.authorization)) return res.status(401);
+  console.log('req headers authorization', req.headers.authorization);
+  // if (!isAuth(req.headers.authorization)) return res.status(401);
+  console.log(req.user.id);
   if (req.params.id === 'me') {
-    return User.findById(req._id)
+    // console.log('req', req);
+
+    // const { id } = req.user.id;
+
+    return User.findById(req.user.id)
       .then((user) => {
         if (!user) {
           apiError.notFound(res, 'User ID not found');
           return;
         }
+        console.log(user);
         res.send(user);
       })
       .catch((err) => {
@@ -73,7 +80,7 @@ module.exports.getUserId = (req, res) => {
         } else if (err.name === 'ValidationError') {
           apiError.validationError(res, 'Invalid data error');
         }
-        apiError.internalServerError(res, 'Internal server error');
+        res.status(500).json('internal server error');
       });
   }
 
@@ -101,7 +108,7 @@ module.exports.updateUser = (req, res) => {
       } else if (err.name === 'ValidationError') {
         apiError.validationError(res, 'Invalid data error');
       }
-      apiError.internalServerError(res, 'Internal server error');
+      res.status(500).json('internal server error');
     });
 };
 module.exports.updateAvatar = (req, res) => {
@@ -123,7 +130,7 @@ module.exports.updateAvatar = (req, res) => {
       } else if (err.name === 'ValidationError') {
         apiError.validationError(res, 'Invalid data error');
       }
-      apiError.internalServerError(res, 'Internal server error');
+      res.status(500).json('internal server error');
     });
 };
 
