@@ -10,7 +10,7 @@ const {
 router.post('/users/signup', createUser);
 router.post('/users/signin', login);
 router.get('/users', auth, getUsers);
-router.get('/users/:id', auth, getUserId);
+router.get('/users/me', auth, getUserId);
 router.patch('/users/me', auth, updateUser);
 router.patch('/users/me/avatar', auth, updateAvatar);
 module.exports = router;

@@ -56,36 +56,30 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-module.exports.getUserId = (req, res) => {
-  console.log('req headers authorization', req.headers.authorization);
-  // if (!isAuth(req.headers.authorization)) return res.status(401);
-  console.log(req.user.id);
-  if (req.params.id === 'me') {
-    // console.log('req', req);
+module.exports.getUserId = (req, res) =>
 
-    // const { id } = req.user.id;
+// NOTE it has to be req.user.id here
+  User.findById(req.user.id)
 
-    return User.findById(req.user.id)
-      .then((user) => {
-        if (!user) {
-          apiError.notFound(res, 'User ID not found');
-          return;
-        }
-        console.log(user);
-        res.send(user);
-      })
-      .catch((err) => {
-        if (err.name === 'CastError') {
-          apiError.castError(res, 'Invalid Card ID error');
-        } else if (err.name === 'ValidationError') {
-          apiError.validationError(res, 'Invalid data error');
-        }
-        res.status(500).json('internal server error');
-      });
-  }
+    .then((user) => {
+      if (!user) {
+        apiError.notFound(res, 'User ID not found');
+        return;
+      }
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        apiError.castError(res, 'Invalid Card ID error');
+      } else if (err.name === 'ValidationError') {
+        apiError.validationError(res, 'Invalid data error');
+      }
+      res.status(500).json('internal server error');
+    })
+// }
 
-  return res.status(400).send({ message: 'user not found' });
-};
+// return res.status(400).send({ message: 'user not found' });
+;
 module.exports.updateUser = (req, res) => {
   const {
     name, about,
@@ -94,7 +88,7 @@ module.exports.updateUser = (req, res) => {
     name,
     about,
   });
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user.id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         apiError.notFound(res, 'User ID not found');
@@ -116,7 +110,7 @@ module.exports.updateAvatar = (req, res) => {
   User.update({
     avatar,
   });
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user.id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         apiError.notFound(res, 'User ID not found');
@@ -143,7 +137,7 @@ module.exports.login = (req, res) => {
       const token = generateToken(user._id);
 
       res.send({ token });
-      console.log(`${user._id} user id and token ${token}`);
+      // console.log(`${user._id} user id and token ${token}`);
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });

@@ -21,14 +21,18 @@ module.exports.createCard = (req, res) => {
     likes, name, link, createdAt,
   } = req.body;
 
+  // NOTE it needs to be .id not ._id
+
   Card.create({
     likes,
     name,
     link,
-    owner: req.user._id,
+    owner: req.user.id,
     createdAt,
   })
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      res.send({ data: card });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         apiError.castError(res, 'Invalid Card ID error');
@@ -58,10 +62,12 @@ module.exports.getCardId = (req, res) => {
     });
 };
 
+// NOTE very important, add auth to all routes that need user id
+
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: req.user.id } },
     {
       new: true,
       runValidators: true,
@@ -85,11 +91,13 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
+  // console.log(req.params.cardId);
+  // console.log(req.user._id);
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
       $pull: {
-        likes: req.user._id,
+        likes: req.user.id,
       },
     },
     {
@@ -119,7 +127,7 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => {
       if (!card) {
         apiError.notFound(res, 'Card ID not found');
-      } else if (!card.owner._id === req.user._id) {
+      } else if (!card.owner.id === req.user.id) {
         apiError.forbidden(res, 'Forbidden. User Id is invalid');
       }
       res.status(200).json({ message: 'Card deleted' });
