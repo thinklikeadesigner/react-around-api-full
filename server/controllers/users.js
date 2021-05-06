@@ -1,31 +1,20 @@
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../errors/api-error');
 const User = require('../models/users');
+const { generateToken } = require('../utils/jwt');
+const { isAuth } = require('../utils/jwt');
 
 const apiError = new ApiError();
-
 const SALT_ROUND = 10;
-
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.castError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
-};
 
 module.exports.createUser = (req, res) => { // _id will become accessible
   const {
     name, about, avatar, password, email,
   } = req.body;
 
-  User.findOne({ email }).then((exists) => {
+  if (!password || !email) return res.status(400).send({ message: 'email or password should not be empty!' });
+
+  return User.findOne({ email }).then((exists) => {
     if (exists) {
       return res.status(403).send({ message: 'you already exist!' });
     }
@@ -52,22 +41,44 @@ module.exports.createUser = (req, res) => { // _id will become accessible
   });
 };
 
-module.exports.getUserId = (req, res) => User.findById(req.params.id)
-  .then((user) => {
-    if (!user) {
-      apiError.notFound(res, 'User ID not found');
-      return;
-    }
-    res.send(user);
-  })
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      apiError.castError(res, 'Invalid Card ID error');
-    } else if (err.name === 'ValidationError') {
-      apiError.validationError(res, 'Invalid data error');
-    }
-    apiError.internalServerError(res, 'Internal server error');
-  });
+// eslint-disable-next-line consistent-return
+module.exports.getUsers = (req, res) => {
+  if (!isAuth(req.headers.authorization)) return res.status(401);
+  User.find({})
+    .then((users) => res.send({ data: users }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        apiError.castError(res, 'Invalid ID error');
+      } else if (err.name === 'ValidationError') {
+        apiError.castError(res, 'Invalid data error');
+      }
+      apiError.internalServerError(res, 'Internal server error');
+    });
+};
+
+module.exports.getUserId = (req, res) => {
+  if (!isAuth(req.headers.authorization)) return res.status(401);
+  if (req.params.id === 'me') {
+    return User.findById(req._id)
+      .then((user) => {
+        if (!user) {
+          apiError.notFound(res, 'User ID not found');
+          return;
+        }
+        res.send(user);
+      })
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          apiError.castError(res, 'Invalid Card ID error');
+        } else if (err.name === 'ValidationError') {
+          apiError.validationError(res, 'Invalid data error');
+        }
+        apiError.internalServerError(res, 'Internal server error');
+      });
+  }
+
+  return res.status(400).send({ message: 'user not found' });
+};
 module.exports.updateUser = (req, res) => {
   const {
     name, about,
@@ -122,13 +133,10 @@ module.exports.login = (req, res) => {
   return User.findUserByCredentials(email, password)
 
     .then((user) => {
-      const { NODE_ENV, JWT_SECRET } = process.env;
+      const token = generateToken(user._id);
 
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
-      );
       res.send({ token });
+      console.log(`${user._id} user id and token ${token}`);
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });

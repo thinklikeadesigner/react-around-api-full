@@ -11,7 +11,6 @@ const userRouter = require('./routes/users');
 const { PORT = 3000 } = process.env;
 app.use(cors());
 app.use(helmet());
-console.log('aaa', process.env.NODE_ENV);
 app.use(express.json());
 app.use(userRouter);
 app.use(cardRouter);
