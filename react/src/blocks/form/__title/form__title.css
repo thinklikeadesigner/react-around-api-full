@@ -1,0 +1,18 @@
+.form__title {
+  color: black;
+  margin: 0 0 40px;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: calc(29 / 24);
+}
+
+
+.form__title_sign_up {
+  color: white;
+  align-self: center;
+  /* font-style: normal; */
+  /* font-weight: 900;
+  font-size: 24px; */
+  /* line-height: 29px; */
+  color: white;
+}

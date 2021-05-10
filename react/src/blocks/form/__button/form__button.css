@@ -1,0 +1,39 @@
+.form__button {
+  max-width: 358px;
+  width: 100%;
+  min-height: 50.15px;
+  background: black;
+  color: white;
+  font-size: 18px;
+  line-height: calc(22 / 18);
+  border-radius: 2px;
+  justify-self: center;
+  align-self: center;
+  border: none;
+  padding: 0;
+  margin-top: 18px;
+}
+
+
+
+
+.form__button_sign_up {
+  background: white;
+  color: black;
+  margin-bottom: 0;
+  margin-top: 216px;
+  padding-bottom: 0;
+}
+
+
+.form__button:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.form__button_member_log_in {
+  background: black;
+  color: white;
+  margin: 0;
+font-size: 14px;
+}

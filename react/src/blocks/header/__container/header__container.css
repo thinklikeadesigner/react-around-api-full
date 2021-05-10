@@ -1,0 +1,27 @@
+.header__container {
+  margin: 45px 199px 0;
+  min-width: 882px;
+  border-bottom: 1px solid #545454;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+}
+
+.header__container_log-out {
+  display: flex;
+  justify-content: space-between;
+}
+@media screen and (max-width: 1140px) {
+  .header__container {
+    margin: 45px 45px 0;
+    min-width: 584px;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .header__container {
+    margin: 28px 0 0;
+    min-width: 282px;
+  }
+}

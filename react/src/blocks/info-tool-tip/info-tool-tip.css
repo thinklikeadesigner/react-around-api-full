@@ -1,0 +1,58 @@
+.infotooltip__container {
+
+    color: black;
+    justify-content: center;
+    padding: 0;
+    min-width: 320px;
+    width: 67vw;
+    max-width: 430px;
+    min-height: 200px;
+    border-radius: 10px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 36px 60px;
+    box-sizing: border-box;
+    
+  }
+  
+  .infotooltip__message {
+    font-family: Inter;
+    font-style: normal;
+    margin-top: 32px;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 700px) {
+    .form_infotooltip {
+      width: 67vw;
+      min-width: 220px;
+    }
+  }
+  
+
+  .info-tool-tip-success {
+    width: 120px;
+    height: 120px;
+    margin: 0 0 41px;
+    background-image: url("../../images/success.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 0;
+  
+}
+.info-tool-tip-failure {
+    width: 120px;
+    height: 120px;
+    margin: 0 0 41px;
+    background-image: url("../../images/failure.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 0;
+  
+}
+

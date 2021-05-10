@@ -1,0 +1,35 @@
+@import url("./__button/form__button.css");
+
+@import url("./__button/_disabled/form__button_disabled.css");
+@import url("./__input/form__input.css");
+@import url("./__title/form__title.css");
+@import url("./__input-error/form__input-error.css");
+@import url("./__input-error/_visible/form__input-error_visible.css");
+@import url("./__button/_signup/form__button_sign_up.css"); 
+@import url("./__input/_type/_error/form__input_type_error.css");
+
+.form {
+  min-width: 320px;
+  width: 67vw;
+  max-width: 430px;
+  min-height: 200px;
+  border-radius: 10px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 36px 34px;
+  box-sizing: border-box;
+}
+
+
+
+
+
+@media screen and (max-width: 700px) {
+  .form {
+    width: 67vw;
+    min-width: 220px;
+  }
+}
+

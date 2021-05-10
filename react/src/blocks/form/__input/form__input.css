@@ -1,0 +1,17 @@
+.form__input {
+  margin: 0 0 5px;
+  font-size: 14px;
+  line-height: calc(17 / 14);
+  min-height: 42px;
+  width: 100%;
+  border-bottom: 1px solid rgb(0, 0, 0, 0.2);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.form__input_sign_up {
+  background-color: black;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 1);
+}
