@@ -1,0 +1,28 @@
+.form_sign_up {
+    background: black;
+  
+  
+  
+  }
+
+
+  .sign-up__container {
+    /* background-color: white; */
+    display: flex;
+    /* visibility: hidden; */
+    /* opacity: 0; */
+    /* transition: opacity 300ms, linear 300ms; */
+    align-items: center;
+    justify-content: center;
+    /* position: fixed; */
+    flex-direction: column;
+    
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75vh;
+    margin: 0;
+    padding: 0;
+  }
+  
+  

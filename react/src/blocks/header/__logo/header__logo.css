@@ -1,0 +1,18 @@
+.header__logo {
+  width: 173px;
+  min-height: 33px;
+  margin: 0 0 41px;
+  background-image: url("../../../images/around-white.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
+@media screen and (max-width: 750px) {
+  .header__logo {
+    width: 126px;
+    min-height: 24px;
+    margin: 0 27px 32px;
+  }
+}

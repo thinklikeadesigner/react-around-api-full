@@ -29,7 +29,7 @@ class ApiError {
   }
 
   static internalServerError(msg) {
-    return ApiError(ERROR_CODE_INTERNAL_SERVER_500, msg);
+    return new ApiError(ERROR_CODE_INTERNAL_SERVER_500, msg);
   }
 }
 

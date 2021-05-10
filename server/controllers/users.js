@@ -1,58 +1,85 @@
+const bcrypt = require('bcryptjs');
 const ApiError = require('../errors/api-error');
 const User = require('../models/users');
+const { generateToken } = require('../utils/jwt');
+// const { isAuth } = require('../utils/jwt');
 
+const apiError = new ApiError();
+const SALT_ROUND = 10;
+
+module.exports.createUser = (req, res) => { // _id will become accessible
+  const {
+    name, about, avatar, password, email,
+  } = req.body;
+
+  if (!password || !email) return res.status(400).send({ message: 'email or password should not be empty!' });
+
+  return User.findOne({ email }).then((exists) => {
+    if (exists) {
+      return res.status(403).send({ message: 'you already exist!' });
+    }
+    return bcrypt.hash(password, SALT_ROUND)
+      .then((hash) => (User.create({
+        name,
+        about,
+        avatar,
+        password: hash,
+        email,
+      })))
+      .then((user) => res.status(201).send({
+        id: user._id,
+        email: user.email,
+      }))
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          apiError.castError(res, 'Invalid ID error');
+        } else if (err.name === 'ValidationError') {
+          apiError.castError(res, 'Invalid data error');
+        }
+        apiError.internalServerError(res, 'Internal server error');
+      });
+  });
+};
+
+// eslint-disable-next-line consistent-return
 module.exports.getUsers = (req, res) => {
+  // if (!isAuth(req.headers.authorization)) return res.status(401);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid ID error');
+        apiError.castError(res, 'Invalid ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.castError(res, 'Invalid data error');
+        apiError.castError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
-module.exports.createUser = (req, res) => { // _id will become accessible
-  const {
-    name, about, avatar,
-  } = req.body;
-  User.create({
-    name,
-    about,
-    avatar,
-  })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid ID error');
-      } else if (err.name === 'ValidationError') {
-        ApiError.castError(res, 'Invalid data error');
-      }
-      ApiError.internalServerError(res, 'Internal server error');
-    });
-};
+module.exports.getUserId = (req, res) =>
 
-module.exports.getUserId = (req, res) => {
-  User.findById(req.params.id)
+// NOTE it has to be req.user.id here
+  User.findById(req.user.id)
+
     .then((user) => {
       if (!user) {
-        ApiError.notFound(res, 'User ID not found');
+        apiError.notFound(res, 'User ID not found');
         return;
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
-    });
-};
+      res.status(500).json('internal server error');
+    })
+// }
 
+// return res.status(400).send({ message: 'user not found' });
+;
 module.exports.updateUser = (req, res) => {
   const {
     name, about,
@@ -61,21 +88,21 @@ module.exports.updateUser = (req, res) => {
     name,
     about,
   });
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user.id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        ApiError.notFound(res, 'User ID not found');
+        apiError.notFound(res, 'User ID not found');
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      res.status(500).json('internal server error');
     });
 };
 module.exports.updateAvatar = (req, res) => {
@@ -83,20 +110,36 @@ module.exports.updateAvatar = (req, res) => {
   User.update({
     avatar,
   });
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user.id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        ApiError.notFound(res, 'User ID not found');
+        apiError.notFound(res, 'User ID not found');
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      res.status(500).json('internal server error');
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+
+    .then((user) => {
+      const token = generateToken(user._id);
+
+      res.send({ token });
+      // console.log(`${user._id} user id and token ${token}`);
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };

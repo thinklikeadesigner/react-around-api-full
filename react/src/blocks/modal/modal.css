@@ -1,0 +1,22 @@
+@import url("./__close-button/modal__close-button.css");
+@import url("./__caption/modal__caption.css");
+@import url("./__container/modal__container.css");
+@import url("./__img/modal__img.css");
+@import url("./__figure/modal__figure.css");
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 300ms, linear 300ms;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+

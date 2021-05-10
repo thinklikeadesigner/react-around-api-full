@@ -1,16 +1,18 @@
 const ApiError = require('../errors/api-error');
 const Card = require('../models/cards');
 
+const apiError = new ApiError();
+
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -19,21 +21,25 @@ module.exports.createCard = (req, res) => {
     likes, name, link, createdAt,
   } = req.body;
 
+  // NOTE it needs to be .id not ._id
+
   Card.create({
     likes,
     name,
     link,
-    owner: req.user._id,
+    owner: req.user.id,
     createdAt,
   })
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      res.send({ data: card });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -41,25 +47,27 @@ module.exports.getCardId = (req, res) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        ApiError.notFound(res, 'Card ID not found');
+        apiError.notFound(res, 'Card ID not found');
         return;
       }
       res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
+
+// NOTE very important, add auth to all routes that need user id
 
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: req.user.id } },
     {
       new: true,
       runValidators: true,
@@ -67,27 +75,29 @@ module.exports.likeCard = (req, res) => {
   )
     .then((likes) => {
       if (!likes) {
-        ApiError.notFound(res, 'Owner ID not found');
+        apiError.notFound(res, 'Owner ID not found');
         return;
       }
       res.status(200).send(likes);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
 module.exports.dislikeCard = (req, res) => {
+  // console.log(req.params.cardId);
+  // console.log(req.user._id);
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
       $pull: {
-        likes: req.user._id,
+        likes: req.user.id,
       },
     },
     {
@@ -97,18 +107,18 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((likes) => {
       if (!likes) {
-        ApiError.notFound(res, 'Owner ID not found');
+        apiError.notFound(res, 'Owner ID not found');
         return;
       }
       res.status(200).send(likes);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -116,18 +126,18 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        ApiError.notFound(res, 'Card ID not found');
-      } else if (!card.owner._id === req.user._id) {
-        ApiError.forbidden(res, 'Forbidden. User Id is invalid');
+        apiError.notFound(res, 'Card ID not found');
+      } else if (!card.owner.id === req.user.id) {
+        apiError.forbidden(res, 'Forbidden. User Id is invalid');
       }
       res.status(200).json({ message: 'Card deleted' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        ApiError.castError(res, 'Invalid Card ID error');
+        apiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        ApiError.validationError(res, 'Invalid data error');
+        apiError.validationError(res, 'Invalid data error');
       }
-      ApiError.internalServerError(res, 'Internal server error');
+      apiError.internalServerError(res, 'Internal server error');
     });
 };
