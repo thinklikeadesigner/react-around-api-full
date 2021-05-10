@@ -19,17 +19,16 @@ function Card(props) {
 
 
   const isOwn = props.card.owner === currentUser.id;
-  // console.log('casdfasurrentUser._id', currentUser._id);
-  // console.log('casdfaurrentUser.id', currentUser.id);
+
 
   const cardDeleteButtonClassName = `card__delete-btn ${
     isOwn ? "card_show-delete-btn card_show-delete-btn" : "card__delete-btn"
   }`;
 
 
-  console.log('props.card.likes', props.card.likes);
+
   
-  const isLiked = props.card.likes.some((i) => 
+  const isLiked = props.card.likes?.some((i) => 
    i._id === currentUser.id
   );
 
@@ -58,7 +57,10 @@ function Card(props) {
             onClick={handleLikeClick}
             className={`${cardLikeButtonClassName}`}
           ></button>
-          <p className='card__likes_count'>{props.card.likes.length}</p>
+          <p className='card__likes_count'>{
+           props.card.likes?.length
+          
+          }</p>
         </div>
       </div>
     </li>
