@@ -94,7 +94,7 @@ function App() {
   function handleCardLike(card) {
 
     //NOTE here it has to be card._id
-    const isLiked = card.likes.some((i) => i._id === currentUser.id);
+    const isLiked = card.likes?.some((i) => i._id === currentUser.id);
 
 
 
@@ -283,7 +283,7 @@ function App() {
         console.log(`useEffect get card list error message ${err}`);
       });
     }
-  }, []);
+  }, [setCards]);
 
 
 

@@ -59,6 +59,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUserId = (req, res) =>
 
 // NOTE it has to be req.user.id here
+  // eslint-disable-next-line implicit-arrow-linebreak
   User.findById(req.user.id)
 
     .then((user) => {
@@ -75,11 +76,8 @@ module.exports.getUserId = (req, res) =>
         apiError.validationError(res, 'Invalid data error');
       }
       res.status(500).json('internal server error');
-    })
-// }
+    });
 
-// return res.status(400).send({ message: 'user not found' });
-;
 module.exports.updateUser = (req, res) => {
   const {
     name, about,

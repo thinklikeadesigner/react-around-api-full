@@ -20,7 +20,7 @@ export class Api {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
       },
     }).then((res) => this._checkResponse(res));
   }
@@ -30,7 +30,7 @@ export class Api {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
       },
       method: "GET",
     }).then((res) => this._checkResponse(res));
@@ -48,16 +48,20 @@ export class Api {
         Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
       },
       method: "POST",
-      body: JSON.stringify({
+      body: JSON.stringify({  
         name,
-        link,
+        link, 
       }),
     }).then((res) => this._checkResponse(res));
   }
 
   removeCard(cardId) {
     return fetch(this._baseUrl + "/cards/" + cardId, {
-      headers: this._headers,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
+      },
       method: "DELETE",
     }).then((res) => this._checkResponse(res));
   }
