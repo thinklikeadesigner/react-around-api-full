@@ -1,10 +1,16 @@
 {
-    "configurations": [
-        {
-            "type": "pwa-chrome",
-            "name": "http://localhost:3000",
-            "request": "launch",
-            "url": "http://localhost:3000"
-        }
-    ]
+  "configurations": [
+    {
+      "name": "Attach",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+    {
+      "type": "pwa-chrome",
+      "name": "http://localhost:3001",
+      "request": "launch",
+      "url": "http://localhost:3001"
+    }
+  ]
 }

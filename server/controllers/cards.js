@@ -5,7 +5,7 @@ const apiError = new ApiError();
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send(cards))
     .catch((err) => {
       if (err.name === 'CastError') {
         apiError.castError(res, 'Invalid Card ID error');
@@ -31,7 +31,7 @@ module.exports.createCard = (req, res) => {
     createdAt,
   })
     .then((card) => {
-      res.send({ data: card });
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -91,8 +91,6 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  // console.log(req.params.cardId);
-  // console.log(req.user._id);
   Card.findByIdAndUpdate(
     req.params.cardId,
     {

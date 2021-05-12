@@ -14,19 +14,16 @@ export function Main({
   onCardLike,
   onCardDelete,
   onSignOut,
-  userData,
-  loggedIn,
 }) {
 
 
-console.log(cards[0]);
   const currentUser = React.useContext(CurrentUserContext);
 
   return (
     <>
       <Header headerlogout='header__container_log-out'>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <p>{userData.email}</p>
+          <p>{currentUser.email}</p>
 
           <Link
             style={{

@@ -45,7 +45,7 @@ module.exports.createUser = (req, res) => { // _id will become accessible
 module.exports.getUsers = (req, res) => {
   // if (!isAuth(req.headers.authorization)) return res.status(401);
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch((err) => {
       if (err.name === 'CastError') {
         apiError.castError(res, 'Invalid ID error');
@@ -92,7 +92,7 @@ module.exports.updateUser = (req, res) => {
         apiError.notFound(res, 'User ID not found');
         return;
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -114,7 +114,7 @@ module.exports.updateAvatar = (req, res) => {
         apiError.notFound(res, 'User ID not found');
         return;
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
