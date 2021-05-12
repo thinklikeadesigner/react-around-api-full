@@ -10,7 +10,7 @@
     }
   }
 
-  const   baseUrl =  "http://localhost:3000";
+  const   baseUrl =  "http://api.final-countdown.students.nomoreparties.site";
 
   export const getCardList = () => {
     return fetch(baseUrl + "/cards", {
