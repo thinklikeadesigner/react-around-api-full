@@ -11,7 +11,7 @@ import {
   Footer,
 } from "./index";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { api } from "../utils/api";
+import * as api from "../utils/api";
 import { Register } from "./Register";
 import { LogIn } from "./LogIn";
 import * as auth from "../utils/auth";
@@ -32,7 +32,6 @@ function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [userData, setUserData] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -147,17 +146,17 @@ function App() {
     }
     auth
       .authorize(email, password)
-      .then((data) => {
-        if (!data) {
+      .then((res) => {
+        if (!res) {
           setSuccess(false);
           handleInfoToolTip();
           setMessage("401 - the user with the specified email not found");
-          data
+          res
             .status(401)
             .json({ message: "the user with the specified email not found" });
           throw new Error("email doesn't exist");
         }
-        if (data) {
+        if (res) {
           setLoggedIn(true);
         }
       })
@@ -241,9 +240,7 @@ function App() {
             setMessage("400 - one or more of the fields were not provided");
             return;
           }
-          return setUserData({
-            email: res.email,
-          });
+          return setCurrentUser(res)
         })
         .then(setLoggedIn(true))
         .then(() => {
@@ -257,18 +254,7 @@ function App() {
     }
   }, [history, loggedIn]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
- if (token) {   api
-  .getUserInfo(token)
-  .then((res) => {
-    console.log('useringo', res);
-    setCurrentUser(res);
-  })
-  .catch((err) => {
-    console.log(` useEffect getUserInfo error message  ${err}`);
-  });}
-  }, []);
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -277,7 +263,7 @@ function App() {
      api
       .getCardList()
       .then((res) => {
-        setCards(res.data);
+        setCards(res);
       })
       .catch((err) => {
         console.log(`useEffect get card list error message ${err}`);
@@ -302,7 +288,6 @@ function App() {
             path='/main'
             loggedIn={loggedIn}
             cards={cards}
-            userData={userData}
             component={Main}
             onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlaceClick}

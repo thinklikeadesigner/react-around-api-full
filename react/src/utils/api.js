@@ -1,13 +1,8 @@
-export class Api {
-  constructor({ baseUrl, headers }) {
-    this._baseUrl = baseUrl;
-    this._headers = headers;
-   
-  }
 
-  //  token = localStorage.getItem("token");
 
-  _checkResponse(res) {
+
+
+  function checkResponse(res) {
     if (res.ok) {
       return res.json();
     } else {
@@ -15,58 +10,49 @@ export class Api {
     }
   }
 
-  getCardList(token) {
-    return fetch(this._baseUrl + "/cards", {
+  const   baseUrl =  "http://localhost:3000";
+
+  export const getCardList = () => {
+    return fetch(baseUrl + "/cards", {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    }).then((res) => this._checkResponse(res));
+    }).then((res) => checkResponse(res));
   }
 
-  getUserInfo(token) {
-    return fetch(this._baseUrl + "/users/me", {
+
+
+
+
+  export const addCard = ({ name, link }) => {
+    return fetch(baseUrl + "/cards", {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
-      },
-      method: "GET",
-    }).then((res) => this._checkResponse(res));
-  }
-
-  getAppInfo() {
-    return Promise.all([this.getUserInfo(), this.getCardList()]);
-  }
-
-  addCard({ name, link }) {
-    return fetch(this._baseUrl + "/cards", {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
+       Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       method: "POST",
       body: JSON.stringify({  
         name,
         link, 
       }),
-    }).then((res) => this._checkResponse(res));
+    }).then((res) => checkResponse(res));
   }
 
-  removeCard(cardId) {
-    return fetch(this._baseUrl + "/cards/" + cardId, {
+  export const removeCard = (cardId) => {
+    return fetch(baseUrl + "/cards/" + cardId, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
+       Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       method: "DELETE",
-    }).then((res) => this._checkResponse(res));
+    }).then((res) => checkResponse(res));
   }
 
-  changeCardLikeStatus(cardId, isLiked) {
+  export const changeCardLikeStatus = (cardId, isLiked) => {
     let apiCall;
 
     if (isLiked) {
@@ -75,54 +61,45 @@ export class Api {
       apiCall = "DELETE";
     }
 
-    return fetch(this._baseUrl + "/cards/likes/" + cardId, {
+    return fetch(baseUrl + "/cards/likes/" + cardId, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
+       Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       method: apiCall,
-    }).then((res) => this._checkResponse(res));
+    }).then((res) => checkResponse(res));
   }
 
-  setUserInfo({ name, about }) {
-    return fetch(this._baseUrl + "/users/me", {
+  export const setUserInfo = ({ name, about }) => {
+    
+    return fetch(baseUrl + "/users/me", {
       method: "PATCH",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
+       Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
         name,
         about,
       }),
-    }).then((res) => this._checkResponse(res));
+    }).then((res) => checkResponse(res));
   }
 
-  setUserAvatar({ avatar }) {
-    return fetch(this._baseUrl + "/users/me/avatar", {
+  export const setUserAvatar = ({ avatar })  => {
+    
+    return fetch(baseUrl + "/users/me/avatar", {
       method: "PATCH",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE`,
+       Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({ avatar }),
-    }).then((res) => this._checkResponse(res));
+    }).then((res) => checkResponse(res));
   }
-}
-
-export const api = new Api({
-  baseUrl: "http://localhost:3000",
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-
-  },
-
-});
 
 //FIXME hard coding token until i can get everuthing working
 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOTFlOTA5MGYzOTk5YzY2ODVmMzlhYyIsImlhdCI6MTYyMDMzNTM0NywiZXhwIjoxNjIwOTQwMTQ3fQ.ixSXdBg04oxlT3IbT2N4sCm7QYOlxfRaoMPM_377QeE
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOWIwOGQ2ODIzNjk1NTllYjA2NDhhMCIsImlhdCI6MTYyMDc3MzA4NSwiZXhwIjoxNjIxMzc3ODg1fQ.4980I0VkN0kg9toWJ6g3PBCKxmfzQx1jHiO0mfE1IPY

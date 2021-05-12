@@ -24,6 +24,7 @@ module.exports = (req, res, next) => {
       .status(401)
       .send({ message: 'Authorization required' });
   }
+
   req.user = payload; // assigning the payload to the request object
 
   return next(); // sending the request to the next middleware
