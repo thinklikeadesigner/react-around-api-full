@@ -29,6 +29,7 @@ app.use((err, req, res, next) => {
         ? 'An error occurred on the server'
         : message,
     });
+  next();
 });
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
