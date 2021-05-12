@@ -63,9 +63,7 @@ function App() {
       .then((res) => setCurrentUser(res))
       .then(closeAllPopups)
       .catch((err) => {
-        console.log(
-          `this is an error message for handleUpdateUserInfo in app.js ${err}`
-        );
+       console.log(err.message);
       });
   }
 
@@ -75,8 +73,8 @@ function App() {
       .then((res) => setCurrentUser(res))
       .then(closeAllPopups)
       .catch((err) => {
-        console.log(`handleUpdateAvatar error message ${err}`);
-      });
+        console.log(err.message);
+       });
   }
 
   //NOTE card functions
@@ -105,8 +103,8 @@ function App() {
         setCards(newCards);
       })
       .catch((err) => {
-        console.log(`handleCard like error message ${err}`);
-      });
+        console.log(err.message);
+       });
   }
 
   function handleCardDelete(card) {
@@ -121,8 +119,8 @@ function App() {
         setCards(filteredCards);
       })
       .catch((err) => {
-        console.log(`handleCardDelete error message ${err}`);
-      });
+        console.log(err.message);
+       });
   }
 
   function handleUpdateCard(card) {
@@ -131,8 +129,8 @@ function App() {
       .then((newCard) => setCards([newCard, ...cards]))
       .then(closeAllPopups)
       .catch((err) => {
-        console.log(`handleUpdateCard error message ${err}`);
-      });
+        console.log(err.message);
+       });
   }
 
   //NOTE sign up log in functions
@@ -166,8 +164,7 @@ function App() {
       })
       .catch((err) => {
         console.log(err.message);
-        console.log(message);
-      });
+       });
   };
 
   const handleRegisterSubmit = (e) => {
@@ -247,10 +244,8 @@ function App() {
           history.push("/main");
         })
         .catch((err) => {
-          console.log(
-            `this is an error message for handleUpdateUserInfo in app.js ${err}`
-          );
-        });
+          console.log(err.message);
+         });
     }
   }, [history, loggedIn]);
 
@@ -266,8 +261,8 @@ function App() {
         setCards(res);
       })
       .catch((err) => {
-        console.log(`useEffect get card list error message ${err}`);
-      });
+        console.log(err.message);
+       });
     }
   }, [setCards]);
 
@@ -300,6 +295,7 @@ function App() {
           ></ProtectedRoute>
           <Route path='/register'>
             <Register
+            message={message}
               onSetEmail={handleSetEmail}
               onSetPassword={handleSetPassword}
               onRegister={handleRegisterSubmit}
@@ -308,6 +304,7 @@ function App() {
           <Route path='/login'>
             <LogIn
               onSetEmail={handleSetEmail}
+              message={message}
               onSetPassword={handleSetPassword}
               onLogin={handleLoginSubmit}
               onInfoToolTip={handleInfoToolTip}

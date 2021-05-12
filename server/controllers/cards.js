@@ -1,27 +1,18 @@
-const ApiError = require('../errors/api-error');
 const Card = require('../models/cards');
+const NotFoundError = require('../errors/NotFoundError');
+const CastError = require('../errors/CastError');
+const Forbidden = require('../errors/ForbiddenError');
 
-const apiError = new ApiError();
-
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid Card ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.validationError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const {
     likes, name, link, createdAt,
   } = req.body;
-
-  // NOTE it needs to be .id not ._id
 
   Card.create({
     likes,
@@ -31,40 +22,22 @@ module.exports.createCard = (req, res) => {
     createdAt,
   })
     .then((card) => {
-      res.send(card);
+      if (!card) throw new CastError('Invalid data');
+      return res.send(card);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid Card ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.validationError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
+    .catch(next);
 };
 
-module.exports.getCardId = (req, res) => {
+module.exports.getCardId = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
-      if (!card) {
-        apiError.notFound(res, 'Card ID not found');
-        return;
-      }
-      res.send(card);
+      if (!card) throw new NotFoundError('Card ID not found');
+      return res.send(card);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid Card ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.validationError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
+    .catch(next);
 };
 
-// NOTE very important, add auth to all routes that need user id
-
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user.id } },
@@ -74,23 +47,13 @@ module.exports.likeCard = (req, res) => {
     },
   )
     .then((likes) => {
-      if (!likes) {
-        apiError.notFound(res, 'Owner ID not found');
-        return;
-      }
-      res.status(200).send(likes);
+      if (!likes) throw new NotFoundError('Owner ID not found');
+      return res.status(200).send(likes);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid Card ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.validationError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
+    .catch(next);
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
@@ -104,38 +67,19 @@ module.exports.dislikeCard = (req, res) => {
     },
   )
     .then((likes) => {
-      if (!likes) {
-        apiError.notFound(res, 'Owner ID not found');
-        return;
-      }
-      res.status(200).send(likes);
+      if (!likes) throw new NotFoundError('Owner ID not found');
+
+      return res.status(200).send(likes);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid Card ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.validationError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
-      if (!card) {
-        apiError.notFound(res, 'Card ID not found');
-      } else if (!card.owner.id === req.user.id) {
-        apiError.forbidden(res, 'Forbidden. User Id is invalid');
-      }
-      res.status(200).json({ message: 'Card deleted' });
+      if (!card) throw new NotFoundError('Card ID not found');
+      if (!card.owner.id === req.user.id) throw new Forbidden('Forbidden. User Id is invalid');
+      return res.status(200).json({ message: 'Card deleted' });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        apiError.castError(res, 'Invalid Card ID error');
-      } else if (err.name === 'ValidationError') {
-        apiError.validationError(res, 'Invalid data error');
-      }
-      apiError.internalServerError(res, 'Internal server error');
-    });
+    .catch(next);
 };
