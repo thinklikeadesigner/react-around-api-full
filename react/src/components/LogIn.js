@@ -29,7 +29,7 @@ export function LogIn({
       </Header>
       <div className={"sign-in__container"}>
         <div className='modal__container'>
-          <p>{message}</p>
+          
           <form
             onSubmit={onLogin}
             action='#'
@@ -39,6 +39,7 @@ export function LogIn({
             noValidate
           >
             <h2 className='form__title form__title_sign_up'>Log In</h2>
+            {/* <span style={{color:"red"}}>{message}</span> */}
             <input
               value={email}
               onChange={onSetEmail}
@@ -77,6 +78,7 @@ export function LogIn({
                 textAlign: "center",
               }}
               to='/register'
+              
               type='submit'
               className={`form__button form__button_member_log_in form__button_sign_up `}
             >

@@ -28,7 +28,7 @@ export function Register({
       </Header>
       <div className={"sign-in__container"}>
         <div className='modal__container'>
-          <p>{message}</p>
+          
           <form
             onSubmit={onRegister}
             action='#'
@@ -37,6 +37,7 @@ export function Register({
             noValidate
           >
             <h2 className='form__title form__title_sign_up'>Sign Up</h2>
+            <span style={{color:"red"}}>{message}</span>
             <input
               id='email-input'
               minLength='2'
