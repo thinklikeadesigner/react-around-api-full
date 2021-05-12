@@ -246,25 +246,18 @@ function App() {
         .catch((err) => {
           console.log(err.message);
          });
+
+         api
+         .getCardList()
+         .then((res) => {
+           setCards(res);
+         })
+         .catch((err) => {
+           console.log(err.message);
+          });
+
     }
   }, [history, loggedIn]);
-
-
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) 
- { 
-     api
-      .getCardList()
-      .then((res) => {
-        setCards(res);
-      })
-      .catch((err) => {
-        console.log(err.message);
-       });
-    }
-  }, [setCards]);
 
 
 
