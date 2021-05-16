@@ -29,3 +29,5 @@ module.exports = (req, res, next) => {
 
   return next(); // sending the request to the next middleware
 };
+
+// https://snipboard.io/epiEsK.jpg If the email and/or password is not correct, the login controller should return 401 status. More about 401 status you can learn here https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401

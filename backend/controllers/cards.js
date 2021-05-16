@@ -83,3 +83,5 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch(next);
 };
+
+// FIXME https://snipboard.io/a2cide.jpg you are trying to compare a string to an object. The value of card.owner._id will be an object, please convert it to a string before comparing. An example of a conditional statement if (req.user._id === data.owner._id.toString ()). Note comparison of objects in javascript is implemented by reference and not by value, I highly recommend reading this https://dmitripavlutin.com/how-to-compare-objects-in-javascript/. This is a common mistake for beginner js developers.
