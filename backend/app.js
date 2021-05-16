@@ -24,6 +24,10 @@ app.use('/', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' });
 });
 
+// FIXME https://snipboard.io/0Rad1t.jpg Middleware for handling an unknown route,
+// violates the principle of centralized error handling. Instead of
+// returning a response directly, it should throw an appropriate exception.
+
 app.use(errors());
 
 app.use((err, req, res, next) => {

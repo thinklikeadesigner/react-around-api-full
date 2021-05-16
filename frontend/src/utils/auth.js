@@ -1,4 +1,5 @@
-export const BASE_URL = "http://localhost:3000";
+// export const baseUrl = 'http://final-countdown.students.nomoreparties.site';
+const   baseUrl =  "http://localhost:3000";
 
 function checkResponse(res) {
   if (res.ok) {
@@ -9,10 +10,10 @@ function checkResponse(res) {
 }
 
 export const register = (email, password) => {
-  return fetch(BASE_URL + "/signup", {
-    method: "POST",
+  return fetch(baseUrl + '/signup', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ email, password }),
   })
@@ -22,39 +23,33 @@ export const register = (email, password) => {
     });
 };
 
-export const authorize = (email, password, ) => {
-  return fetch(BASE_URL + "/signin", {
-    method: "POST",
+export const authorize = (email, password) => {
+  return fetch(baseUrl + '/signin', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ email, password }),
   })
   .then(checkResponse)
     .then((res) => {
       if (res.token) {
-        localStorage.setItem("token", res.token);
+        localStorage.setItem('token', res.token);
         return res;
       }
     });
 };
 
 export const getContent = (jwt) => {
-
-  return fetch(BASE_URL + "/users/me", {
-    method: "GET",
+  return fetch(baseUrl + '/users/me', {
+    method: 'GET',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${jwt}`,
     },
   })
-    .then((res) => {  if (res.ok) {
-      return res.json();
-    } else {
-      Promise.reject("Error!" + res.statusText);
-    }})
+  .then(checkResponse)
     .then((res) => {
       return res;
     });
