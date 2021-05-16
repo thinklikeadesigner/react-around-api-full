@@ -1,35 +1,29 @@
 export const BASE_URL = "http://localhost:3000";
 
-// function checkResponse(res) {
-//   if (res.ok) {
-//     return res.json();
-//   } else {
-//     Promise.reject("Error!" + res.statusText);
-//   }
-// }
+function checkResponse(res) {
+  if (res.ok) {
+    return res.json();
+  } else {
+    Promise.reject("Error!" + res.statusText);
+  }
+}
 
 export const register = (email, password) => {
-  return fetch(BASE_URL + "/users/signup", {
+  return fetch(BASE_URL + "/signup", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
   })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      } else {
-        Promise.reject("Error!" + res.statusText);
-      }
-    })
+    .then(checkResponse)
     .then((res) => {
       return res;
     });
 };
 
 export const authorize = (email, password, ) => {
-  return fetch(BASE_URL + "/users/signin", {
+  return fetch(BASE_URL + "/signin", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -37,15 +31,7 @@ export const authorize = (email, password, ) => {
     },
     body: JSON.stringify({ email, password }),
   })
-  .then((res) =>  
-
-  res.ok ?
-   res.json()
-:
-    Promise.reject("Error!" + res.statusText)
-  
-  
-  )
+  .then(checkResponse)
     .then((res) => {
       if (res.token) {
         localStorage.setItem("token", res.token);
@@ -55,8 +41,7 @@ export const authorize = (email, password, ) => {
 };
 
 export const getContent = (jwt) => {
-  let token = localStorage.getItem("token");
-  console.log('get content token ', token);
+
   return fetch(BASE_URL + "/users/me", {
     method: "GET",
     headers: {

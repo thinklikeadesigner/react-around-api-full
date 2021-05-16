@@ -9,6 +9,7 @@ const { requestLogger, errorLogger } = require('./middleware/logger');
 const app = express();
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
+const authRouter = require('./routes/authRoute');
 
 const { PORT = 3000 } = process.env;
 app.use(cors());
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(requestLogger);
 app.use(userRouter);
 app.use(cardRouter);
+app.use(authRouter);
 app.use(errorLogger);
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' });
