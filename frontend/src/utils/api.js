@@ -1,5 +1,5 @@
 
-
+const baseUrl = process.env.NODE_ENV === 'production' ? 'http://api.final-countdown.students.nomoreparties.site' : 'http://localhost:3001';
 
 
   function checkResponse(res) {
@@ -10,7 +10,7 @@
     }
   }
 
-  const   baseUrl =  "http://api.final-countdown.students.nomoreparties.site";
+  
 
   export const getCardList = () => {
     return fetch(baseUrl + "/cards", {
