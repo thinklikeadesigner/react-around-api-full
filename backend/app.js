@@ -4,11 +4,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
+const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 
 const app = express();
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
+const authRouter = require('./routes/authRoute');
 
 const { PORT = 3000 } = process.env;
 app.use(cors());
@@ -17,10 +19,15 @@ app.use(express.json());
 app.use(requestLogger);
 app.use(userRouter);
 app.use(cardRouter);
+app.use(authRouter);
 app.use(errorLogger);
-app.use('/', (req, res) => {
-  res.status(404).send({ message: 'Requested resource not found' });
+app.use('/', () => {
+  throw new NotFoundError('requested resource not found');
 });
+
+// COMPLETE https://snipboard.io/0Rad1t.jpg Middleware for handling an unknown route,
+// violates the principle of centralized error handling. Instead of
+// returning a response directly, it should throw an appropriate exception.
 
 app.use(errors());
 

@@ -1,4 +1,6 @@
-export const BASE_URL = 'http://api.final-countdown.students.nomoreparties.site';
+
+const   baseUrl = 'http://api.final-countdown.students.nomoreparties.site';
+
 
 function checkResponse(res) {
   if (res.ok) {
@@ -9,7 +11,9 @@ function checkResponse(res) {
 }
 
 export const register = (email, password) => {
-  return fetch(BASE_URL + '/users/signup', {
+
+  return fetch(baseUrl + '/signup', {
+
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -23,7 +27,9 @@ export const register = (email, password) => {
 };
 
 export const authorize = (email, password) => {
-  return fetch(BASE_URL + '/users/signin', {
+
+  return fetch(baseUrl + '/signin', {
+
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -40,7 +46,9 @@ export const authorize = (email, password) => {
 };
 
 export const getContent = (jwt) => {
-  return fetch(BASE_URL + '/users/me', {
+
+  return fetch(baseUrl + '/users/me', {
+
     method: 'GET',
     headers: {
       Accept: 'application/json',
