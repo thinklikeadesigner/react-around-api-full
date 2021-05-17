@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
+const AuthError = require('../errors/AuthError');
 
 function isEmailValid(emailInput) {
   return validator.isEmail(emailInput);
@@ -35,14 +36,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: isEmailValid,
-    // validate: {
-    //   validator(v) {
-    //     return validator.isEmail(v);
-    //   },
-    //   message: 'Please enter a valid ',
-    // },
-    // FIXME email validator function wont work. shows connection refused if wrong email,
-    // and when i try to add a message it wont work at all
   },
   password: {
     type: String,
@@ -56,18 +49,23 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(email,
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Incorrect email or password'));
+        return Promise.reject(new AuthError('Incorrect email or password'));
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('Incorrect email or password'));
+            return Promise.reject(new AuthError('Incorrect email or password'));
           }
 
           return user; // now user is available
         });
     });
 };
+
+// COMPLETE https://snipboard.io/epiEsK.jpg If the email and/or password is not correct,
+// the login controller should return 401 status.
+// More about 401 status you can learn here
+//  https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 
 module.exports = mongoose.model('users', userSchema);

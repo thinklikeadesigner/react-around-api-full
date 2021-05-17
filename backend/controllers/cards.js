@@ -1,7 +1,6 @@
 const Card = require('../models/cards');
 const NotFoundError = require('../errors/NotFoundError');
 const CastError = require('../errors/CastError');
-const Forbidden = require('../errors/ForbiddenError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -78,10 +77,17 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) throw new NotFoundError('Card ID not found');
-      if (!card.owner.id === req.user.id) throw new Forbidden('Forbidden. User Id is invalid');
+      if (!card.owner.toString() === req.user.id) throw new CastError(' User Id is invalid');
       return res.status(200).json({ message: 'Card deleted' });
     })
     .catch(next);
 };
 
-// FIXME https://snipboard.io/a2cide.jpg you are trying to compare a string to an object. The value of card.owner._id will be an object, please convert it to a string before comparing. An example of a conditional statement if (req.user._id === data.owner._id.toString ()). Note comparison of objects in javascript is implemented by reference and not by value, I highly recommend reading this https://dmitripavlutin.com/how-to-compare-objects-in-javascript/. This is a common mistake for beginner js developers.
+/* COMPLETE https://snipboard.io/a2cide.jpg you are trying to compare a
+string to an object. The value of card.owner._id will be an object,
+please convert it to a string before comparing. An example of a
+conditional statement if (req.user._id === data.owner._id.toString ()).
+Note comparison of objects in javascript is implemented by reference and
+not by value, I highly recommend reading this
+https://dmitripavlutin.com/how-to-compare-objects-in-javascript/. This is
+a common mistake for beginner js developers. */

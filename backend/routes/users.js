@@ -5,7 +5,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 
 const {
-  getUsers, createUser, getUserId, updateUser, updateAvatar, login,
+  getUsers, getUserId, updateUser, updateAvatar,
 } = require('../controllers/users');
 
 router.get('/crash-test', () => {
@@ -13,25 +13,6 @@ router.get('/crash-test', () => {
     throw new Error('Server will crash now');
   }, 0);
 });
-
-router.post('/users/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-  headers: Joi.object().keys({
-
-  }).unknown(true),
-}), createUser);
-
-router.post('/users/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-  headers: Joi.object().keys({
-  }).unknown(true),
-}), login);
 
 router.get('/users', auth, getUsers);
 router.get('/users/me', auth, getUserId);

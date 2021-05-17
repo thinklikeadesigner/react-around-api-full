@@ -101,6 +101,3 @@
     }).then((res) => checkResponse(res));
   }
 
-//FIXME hard coding token until i can get everuthing working
-
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOWIwOGQ2ODIzNjk1NTllYjA2NDhhMCIsImlhdCI6MTYyMDc3MzA4NSwiZXhwIjoxNjIxMzc3ODg1fQ.4980I0VkN0kg9toWJ6g3PBCKxmfzQx1jHiO0mfE1IPY
