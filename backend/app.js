@@ -4,6 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
+const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 
 const app = express();
@@ -20,8 +21,8 @@ app.use(userRouter);
 app.use(cardRouter);
 app.use(authRouter);
 app.use(errorLogger);
-app.use('/', (req, res) => {
-  res.status(404).send({ message: 'Requested resource not found' });
+app.use('/', () => {
+  throw new NotFoundError('requested resource not found');
 });
 
 // FIXME https://snipboard.io/0Rad1t.jpg Middleware for handling an unknown route,
