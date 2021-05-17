@@ -25,7 +25,7 @@ app.use('/', () => {
   throw new NotFoundError('requested resource not found');
 });
 
-// FIXME https://snipboard.io/0Rad1t.jpg Middleware for handling an unknown route,
+// COMPLETE https://snipboard.io/0Rad1t.jpg Middleware for handling an unknown route,
 // violates the principle of centralized error handling. Instead of
 // returning a response directly, it should throw an appropriate exception.
 
