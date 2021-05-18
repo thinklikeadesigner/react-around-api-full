@@ -1,6 +1,6 @@
 
-const   baseUrl = 'http://api.final-countdown.students.nomoreparties.site';
-
+// const   baseUrl = 'http://api.final-countdown.students.nomoreparties.site';
+const   baseUrl = process.env.NODE_ENV === 'production' ? "http://api.final-countdown.students.nomoreparties.site" : "http://localhost:3000";
 
 function checkResponse(res) {
   if (res.ok) {
