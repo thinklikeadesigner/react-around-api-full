@@ -4,19 +4,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
+const rateLimit = require('express-rate-limit');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 
 const app = express();
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
-const authRouter = require('./routes/authRoute');
+const authRouter = require('./routes/authroute');
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
 const { PORT = 3000 } = process.env;
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(requestLogger);
+app.use(limiter);
 app.use(userRouter);
 app.use(cardRouter);
 app.use(authRouter);
