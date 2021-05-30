@@ -24,6 +24,7 @@ app.use(errorLogger);
 app.use('/', () => {
   throw new NotFoundError('requested resource not found');
 });
+// FIXME https://snipboard.io/0Rad1t.jpg Middleware for handling an unknown route, violates the principle of centralized error handling. Instead of returning a response directly, it should throw an appropriate exception.
 
 // COMPLETE https://snipboard.io/0Rad1t.jpg Middleware for handling an unknown route,
 // violates the principle of centralized error handling. Instead of
@@ -44,6 +45,9 @@ app.use((err, req, res, next) => {
     });
   next();
 });
+// FIXME (OPTIONAL) https://snipboard.io/gxcGkq.jpg error handling can be placed in a separate file
+
+// FIXME I recommend using https://www.npmjs.com/package/express-rate-limit to limit the number of requests. To protect against DoS attacks. You can learn more about DoS attacks here https://www.youtube.com/watch?v=BcDZS7iYNsA
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,

@@ -23,6 +23,7 @@ export function InfoToolTip(props) {
             {props.isItSuccess
               ? "Success! You have now been registered."
               : "Oops, something went wrong! Please try again."}
+              {/* {props.message} */}
           </h1>
         </div>
         <button
