@@ -10,7 +10,7 @@ const { requestLogger, errorLogger } = require('./middleware/logger');
 const app = express();
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
-const authRouter = require('./routes/authRoute');
+const authRouter = require('./routes/authroute');
 
 const { PORT = 3000 } = process.env;
 app.use(cors());
