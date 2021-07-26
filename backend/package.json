@@ -37,6 +37,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.2",
     "prettier": "^2.2.1",
+    "redis": "^3.1.2",
     "validator": "^13.6.0",
     "winston": "^3.3.3"
   }

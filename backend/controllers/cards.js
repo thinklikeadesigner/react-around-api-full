@@ -1,10 +1,27 @@
+/* eslint-disable consistent-return */
+const Redis = require('redis');
 const Card = require('../models/cards');
 const NotFoundError = require('../errors/NotFoundError');
 const CastError = require('../errors/CastError');
 
+const DEFAULT_EXPIRATION = 3600;
+
+const redisClient = Redis.createClient();
+
 module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send(cards))
+    .then((data) => {
+      redisClient.get('cards', (error, cards) => {
+        if (cards != null) {
+          console.log('cache hit');
+          return res.json(JSON.parse(cards));
+        }
+        console.log('cache miss');
+        redisClient.setex('cards', DEFAULT_EXPIRATION, JSON.stringify(data));
+        res.send(data);
+      });
+    })
+    // .then((cards) => )
     .catch(next);
 };
 
@@ -31,6 +48,7 @@ module.exports.getCardId = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) throw new NotFoundError('Card ID not found');
+      redisClient.setex('cards', DEFAULT_EXPIRATION, JSON.stringify(card));
       return res.send(card);
     })
     .catch(next);
