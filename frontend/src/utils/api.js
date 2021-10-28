@@ -12,7 +12,7 @@
 
   // const   baseUrl =  "http://api.final-countdown.students.nomoreparties.site";
   // const   baseUrl =  "http://localhost:3000";
-  const   baseUrl = process.env.NODE_ENV === 'production' ? "http://api.final-countdown.students.nomoreparties.site" : "http://localhost:3000";
+  const   baseUrl = process.env.NODE_ENV === 'production' ? "https://api-02092011.herokuapp.com" : "http://localhost:3000";
   export const getCardList = () => {
     return fetch(baseUrl + "/cards", {
       headers: {
