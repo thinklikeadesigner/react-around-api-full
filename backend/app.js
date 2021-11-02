@@ -9,6 +9,7 @@ const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 
 const app = express();
+app.use(cors());
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
 const authRouter = require('./routes/authroute');
@@ -19,7 +20,7 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
 });
 const port = process.env.PORT || 3000
-app.use(cors());
+
 app.use(helmet());
 app.use(express.json());
 app.use(requestLogger);
