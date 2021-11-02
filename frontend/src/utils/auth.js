@@ -1,6 +1,6 @@
 
 // const   baseUrl = 'http://api.final-countdown.students.nomoreparties.site';
-const   baseUrl = process.env.NODE_ENV === 'production' ? "https://api-02092011.herokuapp.com" : "http://localhost:3000";
+const   baseUrl = process.env.NODE_ENV === 'production' ? "https://api-02092011.herokuapp.com" : "http://localhost:5000";
 
 function checkResponse(res) {
   if (res.ok) {
@@ -9,7 +9,17 @@ function checkResponse(res) {
     Promise.reject("Error!" + res.statusText);
   }
 }
+/*BUG fix the cors error
 
+Access to fetch at 'https://api-02092011.herokuapp.com/signin' from origin 
+'https://web-client-02092011.herokuapp.com' has been blocked by CORS policy: 
+Response to preflight request doesn't pass access control check: No 
+'Access-Control-Allow-Origin' header is present on the requested resource. 
+If an opaque response serves your needs, set the request's mode to 'no-cors' 
+to fetch the resource with CORS disabled.
+api-02092011.herokuapp.com/signin:1 Failed to load resource: net::ERR_FAILED
+
+*/ 
 export const register = (email, password) => {
 
   return fetch(baseUrl + '/signup', {
