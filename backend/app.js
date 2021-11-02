@@ -19,7 +19,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
 });
-const port = 16856 || 3000
+const PORT = process.env.PORT || 3000
 
 app.use(helmet());
 app.use(express.json());
@@ -60,4 +60,4 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
   useUnifiedTopology: true,
 });
 
-app.listen(port);
+app.listen(PORT);
